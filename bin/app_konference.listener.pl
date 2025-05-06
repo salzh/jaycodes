@@ -65,7 +65,8 @@ if (index($arguments," restart ") ne -1) {
 }
 #======================================================
 
-
+local $response = &asterisk_manager_command('Action' => 'coreshowchannels');
+print Data::Dumper::Dump($response);
 
 
 #======================================================
