@@ -6,8 +6,7 @@ use IO::Socket;
 use Data::Dumper;
 use DBI;
 use Time::Local;
-use Math::Round qw(:all);
-use Net::AMQP::RabbitMQ;
+
 require "/salzh/code/ivr/lib/default.include.pl";
 #======================================================
 
@@ -33,11 +32,6 @@ $BLANK 				= $EOL x 2;
 %buffer 			= ();
 #======================================================
 
-
-$mq = Net::AMQP::RabbitMQ->new();
-$mq->connect("localhost", { user => "guest", password => "guest" });
-$mq->channel_open(1);
-$mq->queue_declare(1, "incoming");
 
 
 #======================================================
@@ -183,9 +177,6 @@ sub bridge() {
 	#print Data::Dumper::Dump($response);
 	local $ticketid = $response->{PARSED}{Value};
 	($extension) = $event{Channel} =~ m{SIP/(.+)\-(\w+)$};
-	$json = &Hash2Json('to' => $extension, 'ticketid' => $ticketid, 'domain_name' => 'jaypbx.cfbtel.com');
-	$mq->publish(1, "incoming", $json);
-	warn "publish $json to mq!";
 }
 
 sub command {
