@@ -7,7 +7,7 @@ use Data::Dumper;
 use DBI;
 use Time::Local;
 
-require "/salzh/code/ivr/lib/default.include.pl";
+require "/salzh/codes/lib/default.include.pl";
 #======================================================
 
 
