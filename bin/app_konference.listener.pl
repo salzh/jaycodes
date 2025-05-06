@@ -186,6 +186,8 @@ sub process_queuecallback_request() {
 	local $callback_number = $event{CallbackNum};
 	
 	warn "Get callback request from callback_number=$callback_number on queue=$queue with position=$position";
+	local $response = &asterisk_manager_command('Action' => 'originate', 'Channel' => "Local/cb$callback_number/n", 'Context' => 'custom-queuecallback', 'Exten' => 'robot', 'Priority' => '1');
+	
 }
 
 sub command {
