@@ -11,12 +11,10 @@ use File::Copy;
 use Digest::MD5 qw(md5 md5_hex md5_base64);
 use DBI;
 use LWP 5.69;
-use Logger::Syslog;
 use Asterisk::AMI;
 use Data::Dumper;
 use Carp; $SIG{ __DIE__ } = sub { Carp::confess( @_ ) };
-$app_root							= "/usr/local/owsline/";
-$host_name							= "neyfrota-dev";
+$app_root							= "/salzh/codes/";
 %template_buffer					= ();
 $database 							= null;
 $conection 							= null;
@@ -34,26 +32,11 @@ $asterisk_manager_response			= null;
 $asterisk_manager_ip				= "127.0.0.1";
 $asterisk_manager_port				= "5038";
 $asterisk_manager_user				= "admin";
-$asterisk_manager_secret			= "RXIagnjrl9mq";
+$asterisk_manager_secret			= "p3cMWCPNOFC4";
 $im_identify						= "/usr/bin/identify";
 $im_convert							= "/usr/bin/convert";
 $im_composite						= "/usr/bin/composite";
-#
-# in future, make this thing permanent in modperl.
-# TODO: do we really need that? are we using that?
-%global_cache	= (); 
-%cache_request	= ();
-%cache_session	= ();
-%cache_user		= ();
-%cache_global	= ();
-#
-# hard code hosts
-$hardcoded_call_server_ip 	= "127.0.0.1";
-$hardcoded_stream_server_ip = "127.0.0.1";
-#$hardcoded_stream_server_ip = "10.0.1.9";
-$hardcoded_call_server 		= "local";
-$hardcoded_stream_server 	= "local";
-$hardcoded_webservice_host	= "www.uslove.com";
+
 %app						= ();
 
 use JSON; # to install, # sudo cpan JSON
