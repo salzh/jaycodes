@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://noojeeclick/content/xul/overlay.css" type="text/css"?>
+
+<overlay id="Velantro-Overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <toolbox id="navigator-toolbox">
+        <toolbar id="Velantro-Toolbar" toolbarname="Velantro Click Toolbar" accesskey="T" class="VelantroToolbar" context="toolbar-context-menu" hidden="false" persist="hidden">
+            <button id="Velantro-Hangup" tooltiptext="Search the Web" class="VelantroButton" label="Web Search" oncommand="document.getElementById('Velantro-Toolbar').setAttribute('hidden', 'true');" />
+            <textbox />
+        </toolbar>
+    </toolbox>
+</overlay>

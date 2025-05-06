@@ -1,0 +1,21 @@
+<module>
+    <rawname>manageengine</rawname>
+    <repo>extended</repo>
+    <name>Manageengine Integration</name>
+    <version>15.0.1</version>
+    <category>Settings</category>
+    <publisher>salzh</publisher>
+    <license>GPLv3+</license>
+    <description>manage customers on manageengine via ivr</description>
+    <menuitems>
+        <manageengine>ManageEngine Integration</manageengine>
+    </menuitems>
+    <changelog>
+    </changelog>
+    <depends>
+        <version>15.0.0</version>
+    </depends>
+    <supported>
+        <version>15.0.0</version>
+    </supported>
+</module>

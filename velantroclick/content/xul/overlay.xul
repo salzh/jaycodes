@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay PUBLIC "-//MOZILLA//DTD XUL V1.0//EN" "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://noojeeclick/content/xul/overlay.css" type="text/css"?>
+
+<overlay id="noojeeclickOverlay"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<menupopup id="menu_ToolsPopup">
+  <menuitem oncommand="noojeeClick.velantroHistory.show();"
+    label="Velantro call history" id="menuitem-velantohistory"
+    insertafter="devToolsSeparator" class="menuitem-iconic"
+    accesskey="Q"/>
+</menupopup>
+
+<toolbarpalette id="BrowserToolbarPalette">
+  <toolbarbutton
+    class="toolbarbutton-1"
+    id="button-velantohistory"
+    label="Velantro History"
+    oncommand="noojeeClick.velantroHistory.show();"
+    tooltiptext="Velantro History"/>
+</toolbarpalette>
+
+   <toolbox id="navigator-toolbox">
+   <toolbar id="VelantroToolbar" toolbarname="Velantro Click Toolbar" accesskey="T" class="VelantroToolbar" context="toolbar-context-menu" hidden="true" customizable="false">
+       <textbox id="VelantroStatus" disabled="true" value="Connecting ..." />
+       <textbox id="VelantroPhone" disabled="true" />
+       <button id="VelantroHangup" tooltiptext="Hangup call" class="VelantroButton" label="Hangup" oncommand="noojeeClick.velantro.sendHangup()" />
+       <textbox id="VelantroTransferTo" />
+       <button id="VelantroTransfer" tooltiptext="Transfer call" class="VelantroButton" label="Transfer" oncommand="noojeeClick.velantro.sendTransfer()" />
+   </toolbar>
+   <toolbar id="VelantroCallToolbar" toolbarname="Velantro Call Toolbar" accesskey="T" class="VelantroToolbar" context="toolbar-context-menu" hidden="true" customizable="false">
+        <textbox id="VelantroCallStatus" disabled="true" value="Call from" />
+        <textbox id="VelantroCallCID" disabled="true" value="" />
+        <textbox id="VelantroCallName" disabled="true" value="" />
+        <button id="VelantroCallIgnore" tooltiptext="Ignore call" class="VelantroButton" label="Ignore" oncommand="noojeeClick.velantro.ignoreCall()" />
+        <textbox id="VelantroCallTransferTo" />
+        <button id="VelantroCallTransfer" tooltiptext="Transfer call" class="VelantroButton" label="Transfer" oncommand="noojeeClick.velantro.sendCallTransfer()" />
+        <button id="VelantroCallCRM" tooltiptext="Use number in CRM system" class="VelantroButton" label="Look up" oncommand="noojeeClick.velantro.sendToCRM(document.getElementById('VelantroCallCID').value)" />
+      </toolbar>
+   </toolbox>
+
+    <popup id="contentAreaContextMenu" popupshowing="noojeeClick.noojeeclick.onDialDifferentlyShowing(this);">
+		<menuseparator id="noojeeClick.contextSeparator"/>
+        <menuitem id="noojeeClick.njcontextDialDifferently"
+                  label="Dial Differently..."
+                  observes="Tasks:noojeeClick.dialDifferently"
+                  class="menu-iconic-wide"
+				  popupshowing="noojeeClick.noojeeclick.onDialDifferentlyShowing(document.popupNode);"
+                  />
+        <menuitem id="noojeeClick.contextDialSelection"
+                  label="Dial Selection..."
+                  observes="Tasks:noojeeClick.dialSelection"
+                  class="menu-iconic-wide"
+				  popupshowing="noojeeClick.noojeeclick.onDialSelectionShowing(document.popupNode);"
+                  />
+        <menuitem id="noojeeClick.contextDialAddPattern"
+                  label="Add Dial Pattern..."
+                  observes="Tasks:noojeeClick.dialAddPattern"
+                  class="menu-iconic-wide"
+				  popupshowing="noojeeClick.noojeeclick.onDialAddPatternShowing(document.popupNode);"
+                  />
+
+    </popup>
+
+  <commandset id="mainCommandSet"
+  commandupdater="true"
+  events="focus"
+  oncommandupdate="goUpdateCommand('Task:enable');goUpdateCommand('Task:redail');">
+    <command id="Tasks:noojeeClick.dial" oncommand="noojeeClick.handlers.dialMenuAction();"/>
+    <command id="Tasks:noojeeClick.redial" oncommand="noojeeClick.handlers.redialMenuAction();"/>
+	<command id="Tasks:noojeeClick.switchCLID" oncommand="noojeeClick.handlers.clidQuickPickMenuAction();"/>
+    <command id="Tasks:noojeeClick.dialFromClipboard" oncommand="noojeeClick.handlers.dialFromClipboardMenuAction();"/>
+    <command id="Tasks:noojeeClick.dialSelection" oncommand="noojeeClick.handlers.dialSelectionMenuAction();"/>
+    <command id="Tasks:noojeeClick.dialDifferently" oncommand="noojeeClick.handlers.dialDifferentlyMenuAction();"/>
+    <command id="Tasks:noojeeClick.configuration" oncommand="noojeeClick.prefs.onConfiguration();"/>
+	<command id="Tasks:noojeeClick.dialAddPattern" oncommand="noojeeClick.handlers.onAddDialPatternMenuAction();"/>
+	<command id="Tasks:noojeeClick.refresh" oncommand="noojeeClick.render.onRefresh();"/>
+    <command id="Tasks:noojeeClick.showClickIcons" oncommand="noojeeClick.handlers.onShowClickIcons();"/>
+    <command id="Tasks:noojeeClick.hangup" oncommand="noojeeClick.handlers.onHangup();"/>
+
+  </commandset>
+
+  <statusbar id="status-bar">
+      <statusbarpanel id="noojeeStatus"
+    				  hidden="true"
+	      			  label=""/>
+      <statusbarpanel id="noojeeHangup"
+                      class="statusbarpanel-iconic"
+                      hidden="true"
+                      src="chrome://noojeeclick/content/images/hangup.png"
+                      onclick="noojeeClick.handlers.onHangup();"/>
+      <statusbarpanel id="noojeeMenu"
+                      class="statusbarpanel-menu-iconic"
+                      src="chrome://noojeeclick/content/images/small.png"
+                      contextmenu="noojeeClick.menuDial">
+	      <menupopup id="noojeeClick.menuDial" onpopupshowing="noojeeClick.noojeeclick.onMenuOpen(this);">
+	        <menuitem id="noojeeClick.menu_Dial"
+	              label="Dial..."
+	              observes="Tasks:noojeeClick.dial"
+	              class="menu-iconic-wide"/>
+	        <menuitem id="noojeeClick.menu_Redial"
+	              label="Redial:"
+	              observes="Tasks:noojeeClick.redial"
+	              popupshowing="noojeeClick.noojeeclick.onRedialShowing(this);"
+	              class="menu-iconic-wide"/>
+	        <menuitem id="noojeeClick.menu_DialClipboard"
+	              label="Dial from Clipboard..."
+	              observes="Tasks:noojeeClick.dialFromClipboard"
+	              class="menu-iconic-wide"/>
+	        <menuitem id="noojeeClick.menu_Configuration"
+	              label="Configuration..."
+	              observes="Tasks:noojeeClick.configuration"
+	              class="menu-iconic-wide"/>
+	        <menuitem id="noojeeClick.menu_ShowClickIcons"
+	              label="Show Click Icons"
+	              type="checkbox"
+	              observes="Tasks:noojeeClick.showClickIcons"
+	              popupshowing="noojeeClick.noojeeclick.onShowClickIconsShowing(this);"
+	              class="menu-iconic-wide"/>
+	        <menuitem id="noojeeClick.menu_Refresh"
+	              label="Refresh"
+	              observes="Tasks:noojeeClick.refresh"
+	              class="menu-iconic-wide"/>
+	        </menupopup>
+      </statusbarpanel>
+
+   </statusbar>
+
+    <script type="application/x-javascript"
+       src="chrome://global/content/globalOverlay.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/namespace.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/lib.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/prompts.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/util.js"/>
+	<script type="application/x-javascript"
+       src="chrome://noojeeclick/content/api.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/prefs.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/logging.js"/>
+	<script type="application/x-javascript"
+       src="chrome://noojeeclick/content/dialstatus.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/monitor.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/event.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/job.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/sequence.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/handlers.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/render.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/phonepatterns.js"/>
+	<script type="application/x-javascript"
+       src="chrome://noojeeclick/content/asterisk.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/messagepassing.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/noojeeclick.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/notification.js"/>
+    <script type="application/x-javascript"
+       src="chrome://noojeeclick/content/configuration.js"/>
+    <script type="application/x-javascript"
+          src="chrome://noojeeclick/content/velantro.js"/>
+
+
+
+</overlay>

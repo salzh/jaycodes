@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>velantroclick@velantro.com</em:id>
+        <em:name>Velantro Click</em:name>
+        <em:version>1.0.5</em:version>
+        <em:description>Velantro Click for Velantro PBX
+        </em:description>
+        <em:creator>Velantro</em:creator>
+        <em:homepageURL>http://velantro.com</em:homepageURL>
+        <em:optionsURL>chrome://noojeeclick/content/xul/configuration.xul</em:optionsURL>
+        <em:iconURL>chrome://noojeeclick/content/images/velantroclick.png</em:iconURL>
+        <em:type>2</em:type> <!-- type=extension -->
+        <em:targetApplication>
+           <!-- Firefox -->
+           <Description>
+                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                <em:minVersion>3.0</em:minVersion>
+                <em:maxVersion>37.*</em:maxVersion>
+           </Description>
+        </em:targetApplication>
+    </Description>
+</RDF>

@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="donothing" title="Velantro call history"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="cancel,extra1,extra2"
+        ondialogcancel="return doCancel();"
+        buttonlabelextra1="Look up"
+        buttonlabelextra2="Call"
+        ondialogextra1="doOK('crm');"
+        ondialogextra2="doOK('call');"
+        onload="onLoad();">
+
+<listbox id="CallsList" rows="10" width="390">
+  <listhead>
+    <listheader label="Time" width="130"/>
+    <listheader label="Dir" width="40"/>
+    <listheader label="Other party" width="120"/>
+    <listheader label="Duration" width="100"/>
+  </listhead>
+  <listcols>
+    <listcol/>
+    <listcol flex="1"/>
+  </listcols>
+</listbox>
+
+<script><![CDATA[
+function doOK(what){
+  if("arguments" in window && window.arguments.length > 1) {
+        var lines = document.getElementsByTagName("listitem");
+        var i;
+        for (i = 0; i < lines.length; i++ ) {
+            console.log(lines[i]);
+            if (lines[i].hasAttribute("selected"))
+                window.arguments[1](
+                    what,
+                    lines[i].childNodes[2].getAttribute("label")
+                );
+        }
+    }
+}
+
+function doCancel(){
+  return true;
+}
+
+function onLoad() {
+    if("arguments" in window && window.arguments.length > 0) {
+        var theList = document.getElementById('CallsList');
+        var calls = window.arguments[0];
+        for (var i = 0; i < calls.length; i++) {
+            var row = document.createElement('listitem');
+
+            var cell = document.createElement('listcell');
+            cell.setAttribute('label', calls[i][0]);
+            row.appendChild(cell);
+
+            var cell = document.createElement('listcell');
+            cell.setAttribute('label', calls[i][1]);
+            row.appendChild(cell);
+
+            var cell = document.createElement('listcell');
+            cell.setAttribute('label', calls[i][2]);
+            row.appendChild(cell);
+
+            var cell = document.createElement('listcell');
+            cell.setAttribute('label', calls[i][3]);
+            row.appendChild(cell);
+
+            theList.appendChild(row);
+        }
+    }
+}
+
+]]></script>
+
+</dialog>

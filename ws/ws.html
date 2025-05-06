@@ -1,0 +1,51 @@
+<html>
+   <head>
+      
+      <script type = "text/javascript">
+         function WebSocketTest() {
+            
+            if ("WebSocket" in window) {
+               var ws = new WebSocket("ws://127.0.0.1:8080/echo");
+				
+               ws.onopen = function() {
+                  
+                  var sent_msg = '{"action":"login","agent":"100","domain_name":"jaypbx.cfbtel.com"}';
+                  // Web Socket is connected, send data using send()
+                  ws.send(sent_msg);
+                  console.log("Message is sent: " + sent_msg);
+               };
+				
+               ws.onmessage = function (evt) { 
+                  var received_msg = evt.data;
+                  console.log("Message is received: " + received_msg);
+                  
+                  var event = obj =JSON.parse(received_msg);
+                  if (event.to) {
+                     //alert(event.agent + event.ticketid);
+                     
+                     window.open("http://help.cfbtel.com/WorkOrder.do?woMode=viewWO&fromListView=true&woID=" + event.ticketid, '', '');
+                  }                 
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  console.log("Connection is closed..."); 
+               };
+            } else {
+              
+               // The browser doesn't support WebSocket
+               alert("WebSocket NOT supported by your Browser!");
+            }
+         }
+      </script>
+		
+   </head>
+   
+   <body>
+      <div id = "sse">
+         <a href = "javascript:WebSocketTest()">Run WebSocket</a>
+      </div>
+      
+   </body>
+</html>

@@ -1,0 +1,22 @@
+#VelantroStatus { width: 90px; }
+#VelantroCallStatus { width: 90px; }
+#VelantroPhone { width: 110px; }
+#VelantroCallCID { width: 110px; }
+#VelantroCallName { width: 110px; }
+#VelantroTransferTo { width: 110px; }
+#VelantroCallTransferTo { width: 110px; }
+#VelantroHangup { background-color: #ffaaaa; -moz-appearance: none !important; border: 1px solid gray; border-radius: 3px; }
+#VelantroTransfer { background-color: #acffaa; -moz-appearance: none !important; border: 1px solid gray; border-radius: 3px; }
+#VelantroCallIgnore { background-color: #ffaaaa; -moz-appearance: none !important; border: 1px solid gray; border-radius: 3px; }
+#VelantroCallTransfer { background-color: #acffaa; -moz-appearance: none !important; border: 1px solid gray; border-radius: 3px; }
+#VelantroCallCRM { background-color: #aac2ff; -moz-appearance: none !important; border: 1px solid gray; border-radius: 3px; }
+.VelantroError {
+    -moz-appearance: none !important;
+    background-color: #ffc5c5;
+    border: 2px solid red;
+}
+#VelantroTransfer[disabled="true"] { background-color: #cdcdcd; }
+#VelantroHangup[disabled="true"] { background-color: #cdcdcd; }
+#button-velantohistory {
+  list-style-image: url("chrome://noojeeclick/content/images/velantro32.png");
+}
