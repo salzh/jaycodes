@@ -138,15 +138,14 @@ while (<$remote>) {
 			}
 			# expand zenofon extra data at "type" field
 			($tmp1,$tmp2,$tmp3,$tmp4) = split(/\|/,$event{Type});
-			$event{ZenofonBillingID} = &clean_int($tmp1);
 			# call action
 			if ($event{Event} =~ /^Bridge/) {
 				
 			}
 			
-			if ($event{Event} eq 'BridgeEnter') {
+			if ($event{Event} eq 'UserEvent' && $event{UserEvent} eq 'QueueCallbackRequest') {
 				print Data::Dumper::Dumper(\%event);
-				&bridge(%event);
+				&process_queuecallback_request(%event);
 			}
 			$eventcount++;
 		} 
@@ -177,6 +176,16 @@ sub bridge() {
 	#print Data::Dumper::Dump($response);
 	local $ticketid = $response->{PARSED}{Value};
 	($extension) = $event{Channel} =~ m{SIP/(.+)\-(\w+)$};
+}
+
+
+sub process_queuecallback_request() {
+	local(%event) = @_;
+	local $queue = $event{Queue};
+	local $position = $event{Position};
+	local $callback_number = $event{CallbackNum};
+	
+	warn "Get callback request from callback_number=$callback_number on queue=$queue with position=$position";
 }
 
 sub command {
