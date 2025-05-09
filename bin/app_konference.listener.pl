@@ -6,7 +6,7 @@ use IO::Socket;
 use Data::Dumper;
 use DBI;
 use Time::Local;
-
+use Asterisk::Manager;
 require "/salzh/codes/lib/default.include.pl";
 #======================================================
 
@@ -64,10 +64,6 @@ if (index($arguments," restart ") ne -1) {
 	unlink("$file_pid");
 }
 #======================================================
-
-local $response = &asterisk_manager_command('Action' => 'coreshowchannels');
-print Data::Dumper::Dump($response);
-
 
 #======================================================
 # fork
@@ -130,11 +126,11 @@ while (<$remote>) {
 		if ($finalline =~ /Event/) {
 			# get regular event data
 			$finalline = ltrim($finalline);
-			@raw_data = split(/\;/, $finalline);			
+			@raw_data = split(/;;/, $finalline);			
 			%event = ();
 			$t = getTime();
 			foreach(@raw_data) {
-				@l = split(/\: /,$_);
+				@l = split(/\: /,$_,2);
 				$event{$l[0]} = $l[1];
 			}
 			# expand zenofon extra data at "type" field
@@ -148,6 +144,11 @@ while (<$remote>) {
 				print Data::Dumper::Dumper(\%event);
 				&process_queuecallback_request(%event);
 			}
+			
+			if ($event{Event} eq 'AgentConnect') {
+				print Data::Dumper::Dumper(\%event);
+				&process_agent_connect(%event);
+			}
 			$eventcount++;
 		} 
 		$finalline="";
@@ -157,7 +158,7 @@ while (<$remote>) {
 		if ($finalline eq "") {
 			$finalline = $line;
 		} else {
-			$finalline .= ";" . $line;
+			$finalline .= ";;" . $line;
 		}
 	}
 }
@@ -173,12 +174,31 @@ goto reconnect;
 
 sub bridge() {
 	local(%event) = @_;
-	local $response = &asterisk_manager_command('Action' => 'Getvar', 'Channel' => $event{Channel}, 'Variable' => 'ticketid');
+	local $response = &send_manager_command('Action' => 'Getvar', 'Channel' => $event{Channel}, 'Variable' => 'ticketid');
 	#print Data::Dumper::Dump($response);
 	local $ticketid = $response->{PARSED}{Value};
 	($extension) = $event{Channel} =~ m{SIP/(.+)\-(\w+)$};
 }
 
+sub process_agent_connect() {
+	local(%event) = @_;
+	local $queue = $event{Queue};
+	local $caller_number = $event{DestConnectedLineNum};
+	local $caller_channel = $event{Channel};
+	local $agent_channel = $event{DestChannel};
+	local $caller_type = '';
+	
+	if ($caller_channel =~ /Local\/cb(\d+)\@/) {
+		$caller_type = 'robot';
+	}
+	
+	warn "Get agent answered event from $caller_type caller_channel=$caller_channel on agent_channel=$agent_channel for $caller_number";
+
+	if ($caller_type eq 'robot') {
+		local %response = &send_manager_command('Action' => 'redirect', 'Channel' => $agent_channel, 'Context' => 'custom-queuecallback', 'Exten' => "d$caller_number", 'Priority' => '1');
+		print Data::Dumper::Dumper(\%response);
+	}	
+}
 
 sub process_queuecallback_request() {
 	local(%event) = @_;
@@ -187,7 +207,9 @@ sub process_queuecallback_request() {
 	local $callback_number = $event{CallbackNum};
 	
 	warn "Get callback request from callback_number=$callback_number on queue=$queue with position=$position";
-	local $response = &asterisk_manager_command('Action' => 'originate', 'Channel' => "Local/cb$callback_number\@custom-queuecallback/n", 'Context' => 'custom-queuecallback', 'Exten' => 'robot', 'Priority' => '1');
+	local %response = &send_manager_command('Action' => 'originate', 'Channel' => "Local/cb$callback_number\@custom-queuecallback/n",
+											'CallerID' => "Robot-$callback_number <$callback_number>","Variable" => "QPOSITION=$position",
+											'Context' => 'custom-queuecallback', 'Exten' => "q$queue", 'Priority' => '1');
 	
 }
 
@@ -242,6 +264,34 @@ sub asterisk_debug_print(){
 	local($msg) = @_;
 	print STDERR "$msg \n";
 	
+}
+
+sub send_manager_command() {
+	%args = @_;
+	print Data::Dumper::Dumper(\%args);
+	$astman = Asterisk::Manager->new(
+		Server   => $host,
+		Port     => $port,
+		Username =>  $user,
+		Secret   => $secret,
+		Debug => 1
+	);
+	
+	$astman->user($user);	
+	$astman->secret($secret);	
+	$astman->host($host);
+	$astman->port($port);
+	
+	$astman->connect || die "Could not connect to " . $astman->host . "!\n";
+	$id = time;
+	unless (defined $args{Async}) {
+		$args{Async} = 'true';
+	}
+	
+	%response = $astman->sendcommand(%args);
+	print Data::Dumper::Dumper(\%response);
+	$astman->disconnect();
+	return %response;
 }
 #======================================================
  

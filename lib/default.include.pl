@@ -402,7 +402,7 @@ sub RemoteAsterisk_AsArray(){
 sub asterisk_manager_connect() {
 	if ($asterisk_manager_is_connected eq 1) {return 1}
 	$asterisk_manager_connection = Asterisk::AMI->new(	PeerAddr => $asterisk_manager_ip,
-														OriginateHack => 1, 
+														OriginateHack => 0, 
                                 						PeerPort => $asterisk_manager_port,
                                 						Username => $asterisk_manager_user,
                                 						Secret   => $asterisk_manager_secret
